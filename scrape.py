@@ -2,23 +2,42 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from math import ceil
+import os
 import base64
 import time 
-from math import ceil
+import getpass
+import platform
 
+def search(driver,term):
+    
+    #Specify search term and sends a google query for the term
+    driver.get('https://google.com')
+    WebDriverWait(driver,1)
+    search_box = driver.find_element_by_class_name('gLFyf')
+    search_box.send_keys(term)
+    search_box.send_keys(Keys.ENTER)
+
+    #Finds the google "Images" box for the search term and clicks on it
+    google_image_box = driver.find_element_by_link_text('Images')
+    google_image_box.click()
+    
 def create_folder():  
     
     #Attempts to create new folder in Downloads. 
     #If it already exists, user is asked if they would like to save their images to existing folder 
     #or make new folder
     
-    from os import mkdir
     folder_name =  input('What would you like to name your new folder of images? You\'ll find this folder in your Downloads: ')
     valid_folder_name = False
     
     while not valid_folder_name:
         try:
-            mkdir(f'/Users/Luis/Downloads/{folder_name}')
+            if platform.system() == 'Darwin':
+                os.mkdir(f'/Users/Luis/Downloads/{folder_name}')
+            elif platform.system() == 'Windows':
+                os.mkdir(f'{homedir}\Downloads\\{folder_name}')
+                
             valid_folder_name = True
             
         except FileExistsError: 
@@ -39,21 +58,6 @@ def create_folder():
                 
     return folder_name
 
-
-def search(driver,term):
-    
-    #Specify search term and sends a google query for the term
-    driver.get('https://google.com')
-    WebDriverWait(driver,1)
-    search_box = driver.find_element_by_class_name('gLFyf')
-    search_box.send_keys(term)
-    search_box.send_keys(Keys.ENTER)
-
-    #Finds the google "Images" box for the search term and clicks on it
-    google_image_box = driver.find_element_by_class_name('qs')
-    google_image_box.click()
-    
-    
 def load_images(driver, images_to_retrieve = 100):
     
     #function using javascript to scroll to the bottom of a page.
@@ -99,6 +103,13 @@ def get_images(driver, images_to_retrieve):
 #Images must be decoded, and then can be saved as an image to a desired path               
 def decode_and_save(images,folder_name):
     
+    homedir = os.path.expanduser('~')
+    
+    if platform.system() == 'Darwin':
+        download_path = homedir+'/Downloads/'+folder_name+'/image'
+    elif platform.system() == 'Windows':
+        download_path = homedir+'\Downloads\\'+folder_name+'\image'
+    
     #Retrieves the base64 encoded picture and it's corresponding file extension(.png, .jpg, .gif, .tif, etc.)
     for i in images: 
         head = i.split(',')[0]
@@ -107,14 +118,13 @@ def decode_and_save(images,folder_name):
         decoded = base64.b64decode(data)
         
         #writes each newly decoded picture to a sub-directory in the Downloads directory
-        with open(f'/Users/Luis/Downloads/{folder_name}/image{images.index(i)}.{file_type}', 'wb') as f:
+        with open(f'{download_path}{images.index(i)}.{file_type}', 'wb') as f:
             f.write(decoded)         
-
-def scrape():
+def scrape(driver_path):
     search_term = input('What images would you like to search on Google? ')
     image_amount= int(input('How many pictures would you like to download? '))
     folder_name =  create_folder()
-    wd = webdriver.Chrome('/Users/Luis/Downloads/ChromeDriver')
+    wd = webdriver.Chrome(driver_path)
     
     search(wd,search_term)
     load_images(wd, image_amount)
@@ -122,5 +132,12 @@ def scrape():
     decode_and_save(images, folder_name)
     wd.quit()
 
-scrape()
-    
+
+#specify location of webdriver 
+driver_path = '/Users/Luis/Downloads/ChromeDriver'
+
+#call function
+scrape(driver_path)
+
+
+
