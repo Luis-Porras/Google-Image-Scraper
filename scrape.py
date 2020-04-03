@@ -21,7 +21,7 @@ def search(driver,term):
     #Finds the google "Images" box for the search term and clicks on it
     google_image_box = driver.find_element_by_link_text('Images')
     google_image_box.click()
-    
+
 def create_folder():  
     
     #Attempts to create new folder in Downloads. 
@@ -30,11 +30,12 @@ def create_folder():
     
     folder_name =  input('What would you like to name your new folder of images? You\'ll find this folder in your Downloads: ')
     valid_folder_name = False
+    homedir = os.path.expanduser('~')
     
     while not valid_folder_name:
         try:
             if platform.system() == 'Darwin':
-                os.mkdir(f'/Users/Luis/Downloads/{folder_name}')
+                os.mkdir(f'{homedir}/Downloads/{folder_name}')
             elif platform.system() == 'Windows':
                 os.mkdir(f'{homedir}\Downloads\\{folder_name}')
                 
@@ -91,11 +92,16 @@ def get_images(driver, images_to_retrieve):
     images = []
     
     for i in elements[:images_to_retrieve+1]:
-        i.click()
-        time.sleep(2)
-        real_image = driver.find_element_by_class_name('n3VNCb')
-        if 'data:image' in real_image.get_attribute('src'):
-            images.append(real_image.get_attribute('src'))
+        
+        try:
+            i.click()
+            time.sleep(2)
+            real_image = driver.find_element_by_class_name('n3VNCb')
+            if 'data:image' in real_image.get_attribute('src'):
+                images.append(real_image.get_attribute('src'))
+                time.sleep(1)
+        except ElementClickInterceptedException:
+            continue
             
     return images
     
@@ -119,7 +125,8 @@ def decode_and_save(images,folder_name):
         
         #writes each newly decoded picture to a sub-directory in the Downloads directory
         with open(f'{download_path}{images.index(i)}.{file_type}', 'wb') as f:
-            f.write(decoded)         
+            f.write(decoded)
+
 def scrape(driver_path):
     search_term = input('What images would you like to search on Google? ')
     image_amount= int(input('How many pictures would you like to download? '))
@@ -131,13 +138,11 @@ def scrape(driver_path):
     images = get_images(wd,image_amount)
     decode_and_save(images, folder_name)
     wd.quit()
-
-
+    
+    
 #specify location of webdriver 
-driver_path = '/Users/Luis/Downloads/ChromeDriver'
+#mac
+driver_path = '/Users/Luis/Downloads/chromedriver'
 
 #call function
 scrape(driver_path)
-
-
-
