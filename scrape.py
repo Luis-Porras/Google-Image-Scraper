@@ -8,6 +8,8 @@ import base64
 import time 
 import getpass
 import platform
+import sys
+import urllib.request 
 
 def search(driver,term):
     
@@ -21,7 +23,7 @@ def search(driver,term):
     #Finds the google "Images" box for the search term and clicks on it
     google_image_box = driver.find_element_by_link_text('Images')
     google_image_box.click()
-
+    
 def create_folder():  
     
     #Attempts to create new folder in Downloads. 
@@ -56,7 +58,7 @@ def create_folder():
             else:
                 print('Please type 1 or 2 as your response....')
                 time.sleep(1)
-                
+            
     return folder_name
 
 def load_images(driver, images_to_retrieve = 100):
@@ -90,42 +92,55 @@ def get_images(driver, images_to_retrieve):
     
     elements = driver.find_elements_by_class_name('rg_i')
     images = []
-    
+
     for i in elements[:images_to_retrieve+1]:
         
         try:
             i.click()
             time.sleep(2)
             real_image = driver.find_element_by_class_name('n3VNCb')
-            if 'data:image' in real_image.get_attribute('src'):
-                images.append(real_image.get_attribute('src'))
-                time.sleep(1)
-        except ElementClickInterceptedException:
+            images.append(real_image.get_attribute('src'))
+            time.sleep(1)
+        except:
             continue
-            
+        
+        sys.stdout.write('\r'+'Downloaded: '+str(elements.index(i))+'/'+str(images_to_retrieve))
+        sys.stdout.flush()
+    
+    print('')
+    print(len(images))
     return images
     
     
 #Images must be decoded, and then can be saved as an image to a desired path               
-def decode_and_save(images,folder_name):
+def decode_and_save(images, folder_name, search_term):
     
     homedir = os.path.expanduser('~')
     
     if platform.system() == 'Darwin':
-        download_path = homedir+'/Downloads/'+folder_name+'/image'
+        download_path = homedir+'/Downloads/'+folder_name+'/'+search_term
     elif platform.system() == 'Windows':
-        download_path = homedir+'\Downloads\\'+folder_name+'\image'
+        download_path = homedir+'\Downloads\\'+folder_name+'\\'+search_term
     
     #Retrieves the base64 encoded picture and it's corresponding file extension(.png, .jpg, .gif, .tif, etc.)
     for i in images: 
-        head = i.split(',')[0]
-        data = i.split(',')[1]
-        file_type = head.split('/')[1].split(';')[0]
-        decoded = base64.b64decode(data)
         
-        #writes each newly decoded picture to a sub-directory in the Downloads directory
-        with open(f'{download_path}{images.index(i)}.{file_type}', 'wb') as f:
-            f.write(decoded)
+        if "data:image" in i:
+            head = i.split(',')[0]
+            data = i.split(',')[1]
+            file_type = head.split('/')[1].split(';')[0]
+            decoded = base64.b64decode(data)
+             #writes each newly decoded picture to a sub-directory in the Downloads directory
+            with open(f'{download_path}{images.index(i)}.{file_type}', 'wb') as f:
+                f.write(decoded)
+                
+                
+        elif "http" in i:
+            urllib.request.urlretrieve(i,download_path+str(images.index(i)))
+                
+        else:
+            print('Unsuccessful Download of: '+i)
+
 
 def scrape(driver_path):
     search_term = input('What images would you like to search on Google? ')
@@ -136,13 +151,15 @@ def scrape(driver_path):
     search(wd,search_term)
     load_images(wd, image_amount)
     images = get_images(wd,image_amount)
-    decode_and_save(images, folder_name)
+    decode_and_save(images, folder_name, search_term)
     wd.quit()
     
-    
 #specify location of webdriver 
-#mac
+#mac: os.path.expanduser('~')/Downloads/chromedriver'
+#windows: os.path.expanduser('~')+'\\Downloads\\chromedriver.exe'
+
 driver_path = '/Users/Luis/Downloads/chromedriver'
 
 #call function
 scrape(driver_path)
+
