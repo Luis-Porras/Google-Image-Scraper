@@ -17,7 +17,7 @@ Web Driver: https://chromedriver.chromium.org/downloads <br /><br /><br />
 3.Follow the console prompts, which ask:<br />
  - 'What images would you like to search on Google? '<br />
  - 'How many pictures would you like to download? '<br />
- - 'What would you like to name your new folder of images? You'll find this folder in your Downloads: '<br />
+ - 'What would you like to name your new folder of images? You'll find this folder in your Downloads.'<br />
 
 The scraper will begin shortly after specifying the new destination folder name.<br />
 

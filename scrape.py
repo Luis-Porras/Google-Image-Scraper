@@ -30,7 +30,7 @@ def create_folder():
     #If it already exists, user is asked if they would like to save their images to existing folder 
     #or make new folder
     
-    folder_name =  input('What would you like to name your new folder of images? You\'ll find this folder in your Downloads: ')
+    folder_name =  input('What would you like to name your new folder of images? You\'ll find this folder in your Downloads.')
     valid_folder_name = False
     homedir = os.path.expanduser('~')
     
