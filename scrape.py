@@ -6,7 +6,6 @@ from math import ceil
 import os
 import base64
 import time 
-import getpass
 import platform
 import sys
 import urllib.request 
