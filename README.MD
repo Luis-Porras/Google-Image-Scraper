@@ -6,7 +6,7 @@ Python3: https://www.python.org/downloads/ <br />
 Selenium: https://selenium-python.readthedocs.io/installation.html <br />
 Web Driver: https://chromedriver.chromium.org/downloads <br /><br /><br />
 ***How To Use*** <br />
-1.After downloading the required dependencies, head to the <code>scrape.py</code> file and change the <code>driver_path</code> variable at the bottom of the file to the location of your webdriver. Chromedriver path usually looks like this: 
+1.After downloading the required dependencies, head to the <code>scrape.py</code> file and change the <code>driver_path</code> variable at the bottom of the file to the location of your webdriver. Chromedriver path usually looks something like this: 
 
  <code>driver_path = /Users/your_user_name/Downloads/chromedriver</code>
 
@@ -19,7 +19,7 @@ Web Driver: https://chromedriver.chromium.org/downloads <br /><br /><br />
  - 'How many pictures would you like to download? '<br />
  - 'What would you like to name your new folder of images? You'll find this folder in your Downloads: '<br />
 
-The scraper will begin shortly after specifying the new folder name. You will have your pictures downloaded<br />
+The scraper will begin shortly after specifying the new destination folder name.<br />
 
 It takes approximately 3-4 seconds to scrape each image. This is because of a required sleep timer to allow pictures to render in the browser before attempting to retrieve it. 
 
