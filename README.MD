@@ -1,18 +1,21 @@
 
 ***Description***
+
 Collects images and saves them to your local Downloads folder. Works on Windows and Unix-based operating systems. The motivation for this project was to create a tool that would free users from relying on online datasets. The Google-Image-Scraper will run in the background, saving users the time and stress that usually comes with image hunting for ML classification problems, website dummy data, or an other projects requiring image collection. 
 
 
 ***Basic Requirements***
+
 Python3: https://www.python.org/downloads/ 
 Selenium: https://selenium-python.readthedocs.io/installation.html
 Web Driver: https://chromedriver.chromium.org/downloads 
 
 
-**How To Use***
+***How To Use***
+
 1. After downloading the required dependencies, head to the <code>scrape.py</code> file and change the <code>driver_path</code> variable at the bottom of the file to the location of your webdriver. 
 
-example: <code>/Users/Luis/Downloads/chromedriver</code>
+<code>driver_path = /Users/Luis/Downloads/chromedriver</code>
 
 2. Run the scrape.py file in a command line interface.
 
